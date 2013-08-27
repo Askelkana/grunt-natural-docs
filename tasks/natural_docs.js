@@ -39,7 +39,8 @@ module.exports = function (grunt) {
 		addOutput();
 		addStyles();
 		addFlags();
-		exec(command.join(' '), function (error, stdout) {
+		command = command.join(' ');
+		exec(command, function (error, stdout) {
 			grunt.log.write(stdout);
 			if (error !== null) {
 				grunt.log.error('\n#' + command + '\n' + error);
