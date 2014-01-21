@@ -27,9 +27,9 @@ module.exports = function (grunt) {
 		var exec = require('child_process').exec;
 		var settings = (function () {
 			var settings = {};
-			for (var i in options) {
-				settings[i] = that.data.hasOwnProperty(i) ? that.data[i] : options[i];
-			}
+			Object.keys(options).forEach(function (option) {
+				settings[option] = that.data.hasOwnProperty(option) ? that.data[option] : options[option];
+			});
 			return settings;
 		})();
 		var command = [ settings.bin ];
@@ -51,41 +51,39 @@ module.exports = function (grunt) {
 		function addExcludes() {
 			if (!(settings.excludes instanceof Array)) {
 				grunt.log.error(that.name + ': illegal excludes.');
-				return;
-			}
-			for (var i in settings.excludes) {
-				command.push('-xi', complete(settings.src, settings.excludes[i]));
+			} else {
+				settings.excludes.forEach(function (exclude) {
+					command.push('-xi', complete(settings.src, exclude));
+				});
 			}
 		}
 
 		function addInputs() {
 			if (!(settings.inputs instanceof Array)) {
 				grunt.log.error(that.name + ': illegal inputs.');
-				return;
-			}
-			if (settings.inputs.length == 0) {
+			} else if (settings.inputs.length == 0) {
 				grunt.log.error(that.name + ': no inputs specified.');
-				return;
-			}
-			for (var i in settings.inputs) {
-				command.push('-i', complete(settings.src, settings.inputs[i]));
+			} else {
+				settings.inputs.forEach(function (input) {
+					command.push('-i', complete(settings.src, input));
+				});
 			}
 		}
 
 		function addFlags() {
 			if (!(settings.flags instanceof Array)) {
 				grunt.log.error(that.name + ': illegal flags.');
-				return;
+			} else {
+				command = command.concat(settings.flags);
 			}
-			command = command.concat(settings.flags);
 		}
 
 		function addOutput() {
 			if (typeof settings.output != 'string') {
 				grunt.log.error(that.name + ': illegal or missing output.');
-				return;
+			} else {
+				command.push('-o', (settings.format), complete(settings.src, settings.output));
 			}
-			command.push('-o', (settings.format), complete(settings.src, settings.output));
 		}
 
 		function addProject() {
@@ -98,11 +96,7 @@ module.exports = function (grunt) {
 		}
 
 		function complete(root, addition) {
-			if (root && addition.indexOf('/') == 0) {
-				return root + addition;
-			} else {
-				return addition;
-			}
+			return root && addition.indexOf('/') == 0 ? root + addition : addition;
 		}
 	});
 };
