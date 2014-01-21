@@ -75,7 +75,7 @@ Type: `Array of Strings`
 
 Default value: `[ '-r', '-oft' ]`
 
-Additional flags.
+Additional flags (i.e. other than the mandatory flags, which are included automatically). To avoid any additional flags, simply provide an empty array.
 
 
 #### options.format
